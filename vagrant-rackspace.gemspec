@@ -4,12 +4,12 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'vagrant-rackspace/version'
 
 Gem::Specification.new do |gem|
-  gem.name          = "vagrant-rackspace"
+  gem.name          = "vagrant-rackspace-provision"
   gem.version       = VagrantPlugins::Rackspace::VERSION
-  gem.authors       = ["Mitchell Hashimoto"]
+  gem.authors       = ["Mitchell Hashimoto (original vagrant-rackspace)"]
   gem.email         = ["mitchell@hashicorp.com"]
-  gem.description   = "Enables Vagrant to manage machines in RackSpace Cloud."
-  gem.summary       = "Enables Vagrant to manage machines in RackSpace Cloud."
+  gem.description   = "FORK OF vagrant-rackspace, with provisioning support merged!  Enables Vagrant to manage machines in RackSpace Cloud."
+  gem.summary       = "FORK OF vagrant-rackspace, with provisioning support merged!  Enables Vagrant to manage machines in RackSpace Cloud."
   gem.homepage      = "http://www.vagrantup.com"
 
   gem.add_runtime_dependency "fog", "~> 1.10.0"

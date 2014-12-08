@@ -1,6 +1,8 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'rspec/core/rake_task'
+require 'cucumber'
+require 'cucumber/rake/task'
 
 # Immediately sync all stdout so that tools like buildbot can
 # immediately load in the output.
@@ -19,3 +21,7 @@ RSpec::Core::RakeTask.new
 
 # Default task is to run the unit tests
 task :default => "spec"
+
+Cucumber::Rake::Task.new(:features) do |t|
+  t.profile = :default
+end

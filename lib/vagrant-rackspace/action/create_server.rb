@@ -90,10 +90,20 @@ module VagrantPlugins
               options[:personality] = [
                 {
                   :path     => "/root/.ssh/authorized_keys",
-                  :contents => Base64.encode64(File.read(public_key_path))
+                  :contents => base64encode(File.read(public_key_path))
                 }
               ]
             end
+          end
+
+          if config.init_script && communicator == :winrm
+            # Might want to check init_script against known limits
+            options[:personality] = [
+              {
+                :path     => 'C:\\cloud-automation\\bootstrap.cmd',
+                :contents => base64encode(config.init_script, :crlf_newline => true)
+              }
+            ]
           end
 
           options[:disk_config] = config.disk_config if config.disk_config
@@ -143,20 +153,10 @@ module VagrantPlugins
                 sleep 10
               end
             end
-
-            # Wait for a communicator
-            env[:ui].info(I18n.t("vagrant_rackspace.waiting_for_communicator",
-              :communicator => communicator, :address => server.public_ip_address))
-
-            while true
-              # If we're interrupted then just back out
-              break if env[:interrupted]
-              break if env[:machine].communicate.ready?
-              sleep 2
-            end
-
-            env[:ui].info(I18n.t("vagrant_rackspace.ready"))
           end
+
+          env[:machine].communicate.sudo config.init_script if config.init_script && communicator == :ssh
+          env[:ui].info(I18n.t("vagrant_rackspace.ready")) # Note - this is before WaitForCommunicator
 
           @app.call(env)
         end
@@ -191,9 +191,15 @@ module VagrantPlugins
 
         # This method checks to see if WinRM over SSL is supported and used
         def winrm_secure?(machine_config)
-          machine_config.winrm.ssl == true
+          machine_config.winrm.transport.to_s == 'ssl'
         rescue NoMethodError
           false
+        end
+
+        def base64encode(content, options = nil)
+          content = content.encode options if options
+          encoded = Base64.encode64 content
+          encoded.strip
         end
 
       end

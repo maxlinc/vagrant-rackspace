@@ -119,6 +119,7 @@ module VagrantPlugins
               b2.use SyncFolders
             end
             b2.use CreateServer
+            b2.use WaitForCommunicator
           end
         end
       end
